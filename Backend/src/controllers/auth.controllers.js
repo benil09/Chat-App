@@ -3,53 +3,55 @@ import User from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 import cloudinary from "../lib/cloudinary.js"
 
-export const signup = async (req,res)=>{
-    const { fullName, email, password}=req.body;
+export const signup = async (req, res) => {
+    console.log("Signup endpoint hit");  // Debugging log
 
-   try {
-    if(!fullName || !email || !password){
-        return res.status(400).json({message:"All fields are required"})
-    } 
+    const { fullName, email, password } = req.body;
 
-    if(password.length<6){
-        return res.status(400).json({message:"Password must constin atleast 6 character"})
-    }
+    try {
+        if (!fullName || !email || !password) {
+            console.log("Missing fields");
+            return res.status(400).json({ message: "All fields are required" });
+        }
 
-    const user=await User.findOne({email})
-    if(user) return res.status(400).json({message:"User already exist"});
+        console.log("Checking if user exists...");
+        const user = await User.findOne({ email });
+        if (user) {
+            console.log("User already exists");
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-    //hash password
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword= await bcrypt.hash (password,salt)
+        console.log("Hashing password...");
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser=new User ({
+        const newUser = new User({
             fullName,
             email,
-           password:hashedPassword
-    })
+            password: hashedPassword,
+        });
 
-    if(newUser){
-        //generate jwt token 
-        generateToken(newUser._id,res)
-        await newUser.save()
-        res.status(201).json({
-            _id:newUser._id,
-            fullName:newUser.fullName,
-            email:newUser.email,
-            profilePic:newUser.profilePic,
-        })
-    }else{
-        res.status(400).json({message:"Invalid User Data"})
+        if (newUser) {
+            console.log("Saving new user...");
+            generateToken(newUser._id, res);
+            await newUser.save();
+
+            res.status(201).json({
+                _id: newUser._id,
+                fullName: newUser.fullName,
+                email: newUser.email,
+                profilePic: newUser.profilePic,
+            });
+        } else {
+            console.log("Invalid user data");
+            res.status(400).json({ message: "Invalid User Data" });
+        }
+
+    } catch (error) {
+        console.log("Error in signup controller", error.message);
+        res.status(500).json({ message: "Internal server error" });
     }
-    
-   } catch (error) {
-        console.log("Error in signup controller",error.message)
-        res.status(500).json({message:"Internal server error"})
-   }
-
-        
-        
-}
+};
 export const login =async (req,res)=>{
     try {
         const {  password ,email}=req.body;

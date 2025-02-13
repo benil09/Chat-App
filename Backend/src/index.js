@@ -9,17 +9,21 @@ import cors from "cors"
 
 
 const app= express()
-app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/auth",authRoutes)
 app.use("/api/message",messageRoutes)
-app.use(cors({
-    origin: ["http://localhost:5173"],
-    credentials: true
-    
 
-}))
+app.use(express.urlencoded({ extended: true })); // Enables form data parsing
+
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow frontend to access the API
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,  // Allow cookies and authentication headers
+}));
+
+app.use(express.json())
+app.use("/api/auth",authRoutes)
 
 
 dotenv.config()
