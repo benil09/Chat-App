@@ -13,7 +13,7 @@ app.use(cookieParser())
 
 app.use("/api/message",messageRoutes)
 
-app.use(express.urlencoded({ extended: true })); // Enables form data parsing
+app.use(express.urlencoded({limit:"5mb", extended: true })); // Enables form data parsing
 
 app.use(cors({
     origin: 'http://localhost:5173', // Allow frontend to access the API
@@ -22,7 +22,7 @@ app.use(cors({
     credentials: true,  // Allow cookies and authentication headers
 }));
 
-app.use(express.json())
+app.use(express.json({limit: "5mb"}))
 app.use("/api/auth",authRoutes)
 
 
