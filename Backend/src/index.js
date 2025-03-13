@@ -11,7 +11,6 @@ import cors from "cors"
 const app= express()
 app.use(cookieParser())
 
-app.use("/api/message",messageRoutes)
 
 app.use(express.urlencoded({limit:"5mb", extended: true })); // Enables form data parsing
 
@@ -24,6 +23,7 @@ app.use(cors({
 
 app.use(express.json({limit: "5mb"}))
 app.use("/api/auth",authRoutes)
+app.use("/api/messages",messageRoutes)
 
 
 dotenv.config()
