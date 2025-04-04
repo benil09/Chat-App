@@ -32,20 +32,22 @@ const MessageInput = () => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
 
-    try {
-      await sendMessage({
-        text: text.trim(),
-        image: imagePreview,
-      });
+    // Clear form before async call
+    const messageToSend = { text: text.trim(), image: imagePreview };
+    setText(""); 
+    setImagePreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
 
-      // Clear form
-      setText("");
-      setImagePreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+    try {
+        console.log("message is sending")
+        toast.success("message is sending")
+        await sendMessage(messageToSend);
+
     } catch (error) {
-      console.error("Failed to send message:", error);
+        console.error("Failed to send message:", error);
+        toast.error("Message sending failed"); // Notify user
     }
-  };
+};
 
   return (
     <div className="p-4 w-full">
