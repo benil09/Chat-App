@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import cloudinary from "../lib/cloudinary.js"
 
 export const signup = async (req, res) => {
-    console.log("Signup endpoint hit");  // Debugging log
+     
 
     const { fullName, email, password } = req.body;
 
@@ -14,14 +14,14 @@ export const signup = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        console.log("Checking if user exists...");
+        
         const user = await User.findOne({ email });
         if (user) {
             console.log("User already exists");
             return res.status(400).json({ message: "User already exists" });
         }
 
-        console.log("Hashing password...");
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -32,7 +32,7 @@ export const signup = async (req, res) => {
         });
 
         if (newUser) {
-            console.log("Saving new user...");
+           
             generateToken(newUser._id, res);
             await newUser.save();
 
@@ -75,11 +75,11 @@ export const login =async (req,res)=>{
             fullName:user.fullName,
             email:user.email,
             profilePic:user.profilePic
-        })
+        },{message:"Login successful"})
 
 
     } catch (error) {
-        console.log("Error in controller message" , error.message)
+        console.log("Error in login controller message" , error.message)
         res.status(500).json({message:"Internal server error"})
     }
 }

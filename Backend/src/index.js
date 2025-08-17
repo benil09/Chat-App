@@ -24,6 +24,8 @@ app.use(cors({
 }));
 
 app.use(express.json({limit: "50mb"}))
+
+//routes
 app.use("/api/auth",authRoutes)
 app.use("/api/messages",messageRoutes)
 
